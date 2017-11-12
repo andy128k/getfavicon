@@ -3,6 +3,11 @@ name = "getfavicon"
 version = "0.1.0"
 authors = ["Andrey Kutejko <andy128k@gmail.com>"]
 
+[[bin]]
+name = "getfavicon"
+path = "src/bin/getfavicon.rs"
+doc = false
+
 [dependencies]
 regex = "0.2.2"
 url = "1.5.1"
