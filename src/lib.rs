@@ -7,6 +7,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate error_chain;
 extern crate structopt;
+extern crate base64;
 
 pub mod error;
 mod find_favicon;

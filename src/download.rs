@@ -3,6 +3,9 @@ use reqwest;
 use reqwest::Response;
 use reqwest::header::ContentType;
 use reqwest::mime::{Mime, CHARSET};
+use url::Url;
+use regex::Regex;
+use base64;
 
 use find_favicon;
 use favicon_url;
@@ -35,7 +38,7 @@ fn fetch_page(page_url: &str) -> Result<String> {
     Ok(content)
 }
 
-fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
+fn fetch_http_favicon(favicon_url: &str) -> Result<Favicon> {
     let mut favicon_response = reqwest::get(favicon_url)?;
     ensure_status_successfull(&favicon_response)?;
 
@@ -46,6 +49,34 @@ fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
     let filename = favicon_url::favicon_filename(favicon_url).ok();
 
     Ok(Favicon { filename, mime, content: favicon_content })
+}
+
+lazy_static! {
+    static ref DATA_URL: Regex = Regex::new(r"([^;]+);base64,(.*)$").unwrap();
+}
+
+fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
+    let path = url.path();
+    if let Some(matches) = DATA_URL.captures(path) {
+        let mime_str = &matches[1];
+        let content_base64 = &matches[2];
+
+        let mime = mime_str.parse::<Mime>().ok();
+        let content = base64::decode(content_base64)?;
+
+        Ok(Favicon { filename: None, mime, content })
+    } else {
+        Err(ErrorKind::UnsupportedDataURLEncoding.into())
+    }
+}
+
+fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
+    let url = Url::parse(favicon_url)?;
+    match url.scheme() {
+        "http" | "https" => fetch_http_favicon(favicon_url),
+        "data" => fetch_data_favicon(&url),
+        scheme@_ => Err(ErrorKind::UnsupportedScheme(scheme.to_owned()).into())
+    }
 }
 
 pub fn download_favicon(page_url: &str) -> Result<Favicon> {
