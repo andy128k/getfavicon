@@ -5,7 +5,7 @@ extern crate tempfile;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
-extern crate error_chain;
+extern crate failure;
 extern crate structopt;
 extern crate base64;
 

@@ -17,7 +17,7 @@ fn ensure_status_successfull(response: &Response) -> Result<()> {
     if status.is_success() {
         Ok(())
     } else {
-        Err(ErrorKind::UnexpectedStatus(status).into())
+        Err(UnexpectedStatus(status).into())
     }
 }
 
@@ -66,7 +66,7 @@ fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
 
         Ok(Favicon { filename: None, mime, content })
     } else {
-        Err(ErrorKind::UnsupportedDataURLEncoding.into())
+        Err(UnsupportedDataURLEncoding.into())
     }
 }
 
@@ -75,7 +75,7 @@ fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
     match url.scheme() {
         "http" | "https" => fetch_http_favicon(favicon_url),
         "data" => fetch_data_favicon(&url),
-        scheme@_ => Err(ErrorKind::UnsupportedScheme(scheme.to_owned()).into())
+        scheme@_ => Err(UnsupportedScheme(scheme.to_owned()).into())
     }
 }
 

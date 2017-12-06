@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate error_chain;
+extern crate failure;
 extern crate structopt;
 #[macro_use]
 extern crate structopt_derive;
@@ -8,7 +7,6 @@ extern crate getfavicon;
 use std::path::Path;
 use structopt::StructOpt;
 use getfavicon::get_favicon;
-use getfavicon::error::*;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "getfavicon", about = "Downloads a favicon for a given page.")]
@@ -20,8 +18,15 @@ struct Opts {
     output_file: String,
 }
 
-quick_main!(|| -> Result<()> {
+fn main() {
     let args = Opts::from_args();
-    get_favicon(&args.page_url, Path::new(&args.output_file))?;
-    Ok(())
-});
+    let result = get_favicon(&args.page_url, Path::new(&args.output_file));
+
+    if let Err(e) = result {
+        println!("Error");
+        for cause in e.causes() {
+            println!("  {}", cause);
+        }
+        ::std::process::exit(1);
+    }
+}

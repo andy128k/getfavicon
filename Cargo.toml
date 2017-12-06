@@ -1,6 +1,6 @@
 [package]
 name = "getfavicon"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Andrey Kutejko <andy128k@gmail.com>"]
 
 [[bin]]
@@ -14,7 +14,7 @@ url = "1.5.1"
 reqwest = "0.8.1"
 tempfile = "2.1.6"
 lazy_static = "1.0.0"
-error-chain = "0.11.0"
+failure = "0.1.1"
 structopt = "0.1.0"
 structopt-derive = "0.1.0"
 base64 = "0.8.0"
