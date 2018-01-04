@@ -23,10 +23,7 @@ fn main() {
     let result = get_favicon(&args.page_url, Path::new(&args.output_file));
 
     if let Err(e) = result {
-        println!("Error");
-        for cause in e.causes() {
-            println!("  {}", cause);
-        }
+        println!("{:?}", e);
         ::std::process::exit(1);
     }
 }
