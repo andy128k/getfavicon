@@ -55,8 +55,10 @@ impl Favicon {
             .prefix("favicon-")
             .suffix(self.suffix())
             .rand_bytes(10)
-            .create()?;
-        (*file).write_all(&self.content)?;
+            .create()
+            .map_err(Error::Io)?;
+        (*file).write_all(&self.content)
+            .map_err(Error::Io)?;
         Ok(file)
     }
 

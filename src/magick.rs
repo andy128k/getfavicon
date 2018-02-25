@@ -18,9 +18,10 @@ fn identify(path: &Path) -> Result<String> {
         .arg("%w %h %z\\n")
         .arg(path)
         .stdout(Stdio::piped())
-        .spawn()?;
-    let output = child.wait_with_output()?;
-    let result = String::from_utf8(output.stdout)?;
+        .spawn()
+        .map_err(Error::Io)?;
+    let output = child.wait_with_output().map_err(Error::Io)?;
+    let result = String::from_utf8(output.stdout).map_err(Error::BadImageFormat)?;
     Ok(result)
 }
 
@@ -56,7 +57,8 @@ pub fn convert(path: &Path, layer_index: usize, output: &Path) -> Result<()> {
         .arg("-resize")
         .arg("16x16>")
         .arg(output)
-        .spawn()?;
-    child.wait()?;
+        .spawn()
+        .map_err(Error::Io)?;
+    child.wait().map_err(Error::Io)?;
     Ok(())
 }

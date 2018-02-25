@@ -2,21 +2,21 @@ use url::Url;
 use error::*;
 
 fn favicon_parsed(parsed_opt: Option<&str>) -> Result<String> {
-    let parsed = parsed_opt.ok_or_else(|| NoLink)?;
-    let parsed_url = Url::parse(parsed)?;
+    let parsed = parsed_opt.ok_or_else(|| Error::NoLink)?;
+    let parsed_url = Url::parse(parsed).map_err(Error::UrlParse)?;
     Ok(parsed_url.into_string())
 }
 
 fn favicon_parsed_with_base(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
-    let parsed = parsed_opt.ok_or_else(|| NoLink)?;
-    let base = Url::parse(page_url)?;
-    let joined = base.join(parsed)?;
+    let parsed = parsed_opt.ok_or_else(|| Error::NoLink)?;
+    let base = Url::parse(page_url).map_err(Error::UrlParse)?;
+    let joined = base.join(parsed).map_err(Error::UrlParse)?;
     Ok(joined.into_string())
 }
 
 fn favicon_fallback(page_url: &str) -> Result<String> {
-    let base = Url::parse(page_url)?;
-    let joined = base.join("/favicon.ico")?;
+    let base = Url::parse(page_url).map_err(Error::UrlParse)?;
+    let joined = base.join("/favicon.ico").map_err(Error::UrlParse)?;
     Ok(joined.into_string())
 }
 
@@ -27,13 +27,13 @@ pub fn favicon_url(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
 }
 
 pub fn favicon_filename(favicon_url: &str) -> Result<String> {
-    let url = Url::parse(favicon_url)?;
-    let path = url.path_segments().ok_or_else(|| NoPath(favicon_url.to_string()))?;
-    let last = path.last().ok_or_else(|| NoPath(favicon_url.to_string()))?;
+    let url = Url::parse(favicon_url).map_err(Error::UrlParse)?;
+    let path = url.path_segments().ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
+    let last = path.last().ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
     if !last.is_empty() {
         Ok(last.to_owned())
     } else {
-        Err(NoPath(favicon_url.to_string()).into())
+        Err(Error::NoPath(favicon_url.to_string()))
     }
 }
 
