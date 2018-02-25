@@ -20,3 +20,7 @@ pub struct NoLink;
 #[derive(Fail, Debug)]
 #[fail(display = "URL '{}' has no path.", _0)]
 pub struct NoPath(pub String);
+
+#[derive(Fail, Debug)]
+#[fail(display = "Bad image.")]
+pub struct BadImage;

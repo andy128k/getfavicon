@@ -28,7 +28,7 @@ pub fn get_favicon(page_url: &str, output_file: &Path) -> Result<()> {
     let favicon = download::download_favicon(page_url)?;
     let file = favicon.save_to_temporary()?;
     let layers = magick::layers(file.path())?;
-    let best = layers.iter().max_by_key(|layer| layer_weight(layer)).expect("Best layer should exist.");
+    let best = layers.iter().max_by_key(|layer| layer_weight(layer)).ok_or_else(|| BadImage)?;
     magick::convert(file.path(), best.index, output_file)?;
     Ok(())
 }
