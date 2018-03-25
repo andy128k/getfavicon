@@ -1,4 +1,3 @@
-use std::ascii::AsciiExt;
 use regex::{Regex, Captures};
 
 lazy_static! {
