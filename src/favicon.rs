@@ -2,7 +2,7 @@ use std::convert::AsRef;
 use std::io::Write;
 use regex::Regex;
 use reqwest::mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
-use tempfile::{NamedTempFile, NamedTempFileOptions};
+use tempfile;
 use error::*;
 
 #[derive(Debug)]
@@ -50,14 +50,14 @@ fn mime_to_suffix(mime: &Mime) -> Option<&'static str> {
 }
 
 impl Favicon {
-    pub fn save_to_temporary(&self) -> Result<NamedTempFile> {
-        let mut file = NamedTempFileOptions::new()
+    pub fn save_to_temporary(&self) -> Result<tempfile::NamedTempFile> {
+        let mut file = tempfile::Builder::new()
             .prefix("favicon-")
             .suffix(self.suffix())
             .rand_bytes(10)
-            .create()
+            .tempfile()
             .map_err(Error::Io)?;
-        (*file).write_all(&self.content)
+        file.write_all(&self.content)
             .map_err(Error::Io)?;
         Ok(file)
     }
