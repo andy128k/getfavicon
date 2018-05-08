@@ -9,7 +9,7 @@ path = "src/bin/getfavicon.rs"
 doc = false
 
 [dependencies]
-regex = "0.2.2"
+regex = "1.0.0"
 url = "1.5.1"
 reqwest = "0.8.1"
 tempfile = "3.0.0"
