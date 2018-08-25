@@ -1,8 +1,7 @@
 use std::io::Read;
-use reqwest;
-use reqwest::Response;
-use reqwest::header::ContentType;
-use reqwest::mime::{Mime, CHARSET};
+use std::str::FromStr;
+use reqwest::{self, Response, header::CONTENT_TYPE};
+use mime::{Mime, CHARSET};
 use url::Url;
 use regex::Regex;
 use base64;
@@ -22,7 +21,9 @@ fn ensure_status_successfull(response: &Response) -> Result<()> {
 }
 
 fn get_mime(response: &Response) -> Option<Mime> {
-    response.headers().get::<ContentType>().map(|h| (**h).clone())
+    response.headers().get(CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| Mime::from_str(value).ok())
 }
 
 fn get_charset(mime: Mime) -> Option<String> {

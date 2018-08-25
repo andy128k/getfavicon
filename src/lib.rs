@@ -1,6 +1,7 @@
 extern crate regex;
 extern crate url;
 extern crate reqwest;
+extern crate mime;
 extern crate tempfile;
 #[macro_use]
 extern crate lazy_static;

@@ -1,7 +1,7 @@
 use std::convert::AsRef;
 use std::io::Write;
 use regex::Regex;
-use reqwest::mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
+use mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
 use tempfile;
 use error::*;
 
