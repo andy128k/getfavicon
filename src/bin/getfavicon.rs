@@ -1,5 +1,4 @@
 extern crate failure;
-#[macro_use]
 extern crate structopt;
 extern crate getfavicon;
 
