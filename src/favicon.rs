@@ -3,7 +3,7 @@ use std::io::Write;
 use regex::Regex;
 use mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
 use tempfile;
-use error::*;
+use crate::error::*;
 
 #[derive(Debug)]
 pub struct Favicon {

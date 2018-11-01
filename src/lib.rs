@@ -18,7 +18,7 @@ mod download;
 mod magick;
 
 use std::path::Path;
-use error::*;
+use crate::error::*;
 
 fn layer_weight(layer: &magick::Layer) -> (u32, u32, u32, u32) {
     let small = if layer.width <= 16 && layer.height <= 16 { 1 } else { 0 };

@@ -2,7 +2,7 @@ use std::process::{Command, Stdio};
 use std::path::Path;
 use std::ffi::OsString;
 use regex::Regex;
-use error::*;
+use crate::error::*;
 
 #[derive(Debug)]
 pub struct Layer {

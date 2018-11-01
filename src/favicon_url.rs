@@ -1,5 +1,5 @@
 use url::Url;
-use error::*;
+use crate::error::*;
 
 fn favicon_parsed(parsed_opt: Option<&str>) -> Result<String> {
     let parsed = parsed_opt.ok_or_else(|| Error::NoLink)?;

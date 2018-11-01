@@ -6,10 +6,10 @@ use url::Url;
 use regex::Regex;
 use base64;
 
-use find_favicon;
-use favicon_url;
-use favicon::Favicon;
-use error::*;
+use crate::find_favicon;
+use crate::favicon_url;
+use crate::favicon::Favicon;
+use crate::error::*;
 
 fn ensure_status_successfull(response: &Response) -> Result<()> {
     let status = response.status();
