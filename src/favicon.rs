@@ -73,10 +73,10 @@ impl Favicon {
 mod tests {
     use super::*;
 
-    fn make_favicon(filename: Option<&str>, mime: Option<Mime>) -> Favicon {
+    fn make_favicon(filename: impl Into<Option<&'static str>>, mime: impl Into<Option<Mime>>) -> Favicon {
         Favicon {
-            filename: filename.map(str::to_string),
-            mime,
+            filename: filename.into().map(|v| v.to_owned()),
+            mime: mime.into(),
             content: Vec::new()
         }
     }
@@ -88,26 +88,26 @@ mod tests {
 
     #[test]
     fn test_favicon_suffix_png() {
-        assert_eq!(make_favicon(Some("favicon.png"), None).suffix(), ".png");
+        assert_eq!(make_favicon("favicon.png", None).suffix(), ".png");
     }
 
     #[test]
     fn test_favicon_suffix_gif() {
-        assert_eq!(make_favicon(Some("XXXXXX.GIF"), None).suffix(), ".gif");
+        assert_eq!(make_favicon("XXXXXX.GIF", None).suffix(), ".gif");
     }
 
     #[test]
     fn test_favicon_suffix_unknown() {
-        assert_eq!(make_favicon(Some("XXXXXX.YYY"), None).suffix(), ".ico");
+        assert_eq!(make_favicon("XXXXXX.YYY", None).suffix(), ".ico");
     }
 
     #[test]
     fn test_favicon_suffix_mime_jpeg() {
-        assert_eq!(make_favicon(None, Some(IMAGE_JPEG)).suffix(), ".jpg");
+        assert_eq!(make_favicon(None, IMAGE_JPEG).suffix(), ".jpg");
     }
 
     #[test]
     fn test_favicon_suffix_mime_ico() {
-        assert_eq!(make_favicon(None, Some(IMAGE_ICO.clone())).suffix(), ".ico");
+        assert_eq!(make_favicon(None, IMAGE_ICO.clone()).suffix(), ".ico");
     }
 }

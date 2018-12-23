@@ -2,13 +2,13 @@ use url::Url;
 use crate::error::*;
 
 fn favicon_parsed(parsed_opt: Option<&str>) -> Result<String> {
-    let parsed = parsed_opt.ok_or_else(|| Error::NoLink)?;
+    let parsed = parsed_opt.ok_or(Error::NoLink)?;
     let parsed_url = Url::parse(parsed).map_err(Error::UrlParse)?;
     Ok(parsed_url.into_string())
 }
 
 fn favicon_parsed_with_base(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
-    let parsed = parsed_opt.ok_or_else(|| Error::NoLink)?;
+    let parsed = parsed_opt.ok_or(Error::NoLink)?;
     let base = Url::parse(page_url).map_err(Error::UrlParse)?;
     let joined = base.join(parsed).map_err(Error::UrlParse)?;
     Ok(joined.into_string())

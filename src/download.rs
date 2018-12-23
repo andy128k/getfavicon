@@ -26,13 +26,13 @@ fn get_mime(response: &Response) -> Option<Mime> {
         .and_then(|value| Mime::from_str(value).ok())
 }
 
-fn get_charset(mime: Mime) -> Option<String> {
-    mime.get_param(CHARSET).map(|ref c| c.to_string())
+fn get_charset(mime: &Mime) -> Option<&str> {
+    mime.get_param(CHARSET).map(|ref c| c.as_str())
 }
 
 fn fetch_page(page_url: &str) -> Result<String> {
     let mut response = reqwest::get(page_url).map_err(Error::Request)?;
-    let charset = get_mime(&response).and_then(get_charset).unwrap_or("utf-8".to_string());
+    let charset = get_mime(&response).as_ref().and_then(get_charset).unwrap_or("utf-8");
     let mut bytes = Vec::<u8>::new();
     response.read_to_end(&mut bytes).map_err(Error::Io)?;
     let content = String::from_utf8_lossy(&bytes).to_string();
@@ -74,7 +74,7 @@ fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
     match url.scheme() {
         "http" | "https" => fetch_http_favicon(favicon_url),
         "data" => fetch_data_favicon(&url),
-        scheme@_ => Err(Error::UnsupportedScheme(scheme.to_owned()))
+        scheme => Err(Error::UnsupportedScheme(scheme.to_owned()))
     }
 }
 

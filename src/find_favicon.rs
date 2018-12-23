@@ -32,7 +32,7 @@ fn is_icon(attributes: &str) -> bool {
     }
 }
 
-fn get_href<'t>(attributes: &str) -> Option<&str> {
+fn get_href(attributes: &str) -> Option<&str> {
     HREF_RE.captures(attributes)
         .and_then(|c| c.get(1))
         .map(|m| m.as_str())
@@ -44,7 +44,7 @@ pub fn find_favicon(html: &str) -> Option<String> {
         .filter(|attributes| is_icon(attributes))
         .filter_map(|attributes| get_href(attributes))
         .nth(0)
-        .map(|href| href.to_string())
+        .map(|href| href.to_owned())
 }
 
 #[cfg(test)]
