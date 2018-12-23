@@ -1,4 +1,5 @@
 use regex::{Regex, Captures};
+use lazy_static::lazy_static;
 
 lazy_static! {
     static ref SPACES_RE: Regex = Regex::new(r"\s+").unwrap();

@@ -19,19 +19,19 @@ pub enum Error {
     BadImage,
 
     #[fail(display = "Bad image data {}.", _0)]
-    BadImageData(#[cause] ::base64::DecodeError),
+    BadImageData(#[cause] base64::DecodeError),
 
     #[fail(display = "Bad image format {}.", _0)]
-    BadImageFormat(#[cause] ::std::string::FromUtf8Error),
+    BadImageFormat(#[cause] std::string::FromUtf8Error),
 
     #[fail(display = "I/O error {}.", _0)]
-    Io(#[cause] ::std::io::Error),
+    Io(#[cause] std::io::Error),
 
     #[fail(display = "URL parse error {}.", _0)]
-    UrlParse(#[cause] ::url::ParseError),
+    UrlParse(#[cause] url::ParseError),
 
     #[fail(display = "Request error {}.", _0)]
-    Request(#[cause] ::reqwest::Error),
+    Request(#[cause] reqwest::Error),
 }
 
-pub type Result<T> = ::std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;

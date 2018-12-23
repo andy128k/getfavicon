@@ -4,7 +4,7 @@ use reqwest::{self, Response, header::CONTENT_TYPE};
 use mime::{Mime, CHARSET};
 use url::Url;
 use regex::Regex;
-use base64;
+use lazy_static::lazy_static;
 
 use crate::find_favicon;
 use crate::favicon_url;

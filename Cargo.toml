@@ -2,6 +2,7 @@
 name = "getfavicon"
 version = "0.2.0"
 authors = ["Andrey Kutejko <andy128k@gmail.com>"]
+edition = "2018"
 
 [[bin]]
 name = "getfavicon"

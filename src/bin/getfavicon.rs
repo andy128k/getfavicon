@@ -1,7 +1,3 @@
-extern crate failure;
-extern crate structopt;
-extern crate getfavicon;
-
 use std::path::Path;
 use structopt::StructOpt;
 use getfavicon::get_favicon;

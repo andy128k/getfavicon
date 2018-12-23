@@ -2,7 +2,7 @@ use std::convert::AsRef;
 use std::io::Write;
 use regex::Regex;
 use mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
-use tempfile;
+use lazy_static::lazy_static;
 use crate::error::*;
 
 #[derive(Debug)]
