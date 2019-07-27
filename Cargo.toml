@@ -11,7 +11,7 @@ doc = false
 
 [dependencies]
 regex = "1.0.0"
-url = "1.5.1"
+url = "2"
 reqwest = "0.9.0"
 mime = "0.3"
 tempfile = "3.0.0"
