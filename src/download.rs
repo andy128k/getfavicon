@@ -1,15 +1,15 @@
+use lazy_static::lazy_static;
+use mime::Mime;
+use regex::Regex;
+use reqwest::{self, header::CONTENT_TYPE, Response};
 use std::io::Read;
 use std::str::FromStr;
-use reqwest::{self, Response, header::CONTENT_TYPE};
-use mime::Mime;
 use url::Url;
-use regex::Regex;
-use lazy_static::lazy_static;
 
-use crate::find_favicon;
-use crate::favicon_url;
-use crate::favicon::Favicon;
 use crate::error::*;
+use crate::favicon::Favicon;
+use crate::favicon_url;
+use crate::find_favicon;
 
 impl std::convert::From<reqwest::Error> for Error {
     fn from(error: reqwest::Error) -> Self {
@@ -18,29 +18,34 @@ impl std::convert::From<reqwest::Error> for Error {
 }
 
 fn get_mime(response: &Response) -> Option<Mime> {
-    response.headers().get(CONTENT_TYPE)
+    response
+        .headers()
+        .get(CONTENT_TYPE)
         .and_then(|value| value.to_str().ok())
         .and_then(|value| Mime::from_str(value).ok())
 }
 
 fn fetch_page(page_url: &str) -> Result<String> {
-    let content = reqwest::get(page_url)?
-        .error_for_status()?
-        .text()?;
+    let content = reqwest::get(page_url)?.error_for_status()?.text()?;
     Ok(content)
 }
 
 fn fetch_http_favicon(favicon_url: &str) -> Result<Favicon> {
-    let mut favicon_response = reqwest::get(favicon_url)?
-        .error_for_status()?;
+    let mut favicon_response = reqwest::get(favicon_url)?.error_for_status()?;
 
     let mime = get_mime(&favicon_response);
     let filename = favicon_url::favicon_filename(favicon_url).ok();
 
     let mut content = Vec::new();
-    favicon_response.read_to_end(&mut content).map_err(Error::Io)?;
+    favicon_response
+        .read_to_end(&mut content)
+        .map_err(Error::Io)?;
 
-    Ok(Favicon { filename, mime, content })
+    Ok(Favicon {
+        filename,
+        mime,
+        content,
+    })
 }
 
 fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
@@ -50,14 +55,20 @@ fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
 
     let path = url.path();
 
-    let matches = DATA_URL.captures(path).ok_or_else(|| Error::UnsupportedDataURLEncoding)?;
+    let matches = DATA_URL
+        .captures(path)
+        .ok_or_else(|| Error::UnsupportedDataURLEncoding)?;
     let mime_str = &matches[1];
     let content_base64 = &matches[2];
 
     let mime = mime_str.parse::<Mime>().ok();
     let content = base64::decode(content_base64).map_err(Error::BadImageData)?;
 
-    Ok(Favicon { filename: None, mime, content })
+    Ok(Favicon {
+        filename: None,
+        mime,
+        content,
+    })
 }
 
 fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
@@ -65,7 +76,7 @@ fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
     match url.scheme() {
         "http" | "https" => fetch_http_favicon(favicon_url),
         "data" => fetch_data_favicon(&url),
-        scheme => Err(Error::UnsupportedScheme(scheme.to_owned()))
+        scheme => Err(Error::UnsupportedScheme(scheme.to_owned())),
     }
 }
 

@@ -1,8 +1,8 @@
-use std::process::{Command, Stdio};
-use std::path::Path;
-use std::ffi::OsString;
-use regex::Regex;
 use crate::error::*;
+use regex::Regex;
+use std::ffi::OsString;
+use std::path::Path;
+use std::process::{Command, Stdio};
 
 #[derive(Debug)]
 pub struct Layer {
@@ -26,16 +26,24 @@ fn identify(path: &Path) -> Result<String> {
 }
 
 fn parse_layers(info: &str) -> Result<Vec<Layer>> {
-    let re = Regex::new(r##"(?xi)
-        (\d+) \s+ (\d+) \s+ (\d+) \n
-    "##).unwrap();
+    let re = Regex::new(
+        r##"(?xi)
+            (\d+) \s+ (\d+) \s+ (\d+) \n
+        "##,
+    )
+    .unwrap();
 
     let mut layers = Vec::new();
     for (index, layer_match) in re.captures_iter(info).enumerate() {
         let width = u32::from_str_radix(&layer_match[1], 10).unwrap();
         let height = u32::from_str_radix(&layer_match[2], 10).unwrap();
         let depth = u32::from_str_radix(&layer_match[3], 10).unwrap();
-        layers.push(Layer { index, width, height, color_depth: depth });
+        layers.push(Layer {
+            index,
+            width,
+            height,
+            color_depth: depth,
+        });
     }
     Ok(layers)
 }

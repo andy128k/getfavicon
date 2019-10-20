@@ -1,9 +1,9 @@
+use crate::error::*;
+use lazy_static::lazy_static;
+use mime::{Mime, IMAGE_GIF, IMAGE_JPEG, IMAGE_PNG};
+use regex::Regex;
 use std::convert::AsRef;
 use std::io::Write;
-use regex::Regex;
-use mime::{Mime, IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
-use lazy_static::lazy_static;
-use crate::error::*;
 
 #[derive(Debug)]
 pub struct Favicon {
@@ -17,7 +17,6 @@ lazy_static! {
     static ref SUFFIX_JPG: Regex = Regex::new(r"(?i)\.(jpg|jpeg)$").unwrap();
     static ref SUFFIX_PNG: Regex = Regex::new(r"(?i)\.png$").unwrap();
     static ref SUFFIX_GIF: Regex = Regex::new(r"(?i)\.gif$").unwrap();
-
     static ref IMAGE_ICO: Mime = "image/vnd.microsoft.icon".parse::<Mime>().unwrap();
 }
 
@@ -57,13 +56,14 @@ impl Favicon {
             .rand_bytes(10)
             .tempfile()
             .map_err(Error::Io)?;
-        file.write_all(&self.content)
-            .map_err(Error::Io)?;
+        file.write_all(&self.content).map_err(Error::Io)?;
         Ok(file)
     }
 
     fn suffix(&self) -> &'static str {
-        self.filename.as_ref().and_then(filename_to_suffix)
+        self.filename
+            .as_ref()
+            .and_then(filename_to_suffix)
             .or_else(|| self.mime.as_ref().and_then(mime_to_suffix))
             .unwrap_or(".ico")
     }
@@ -73,11 +73,14 @@ impl Favicon {
 mod tests {
     use super::*;
 
-    fn make_favicon(filename: impl Into<Option<&'static str>>, mime: impl Into<Option<Mime>>) -> Favicon {
+    fn make_favicon(
+        filename: impl Into<Option<&'static str>>,
+        mime: impl Into<Option<Mime>>,
+    ) -> Favicon {
         Favicon {
             filename: filename.into().map(|v| v.to_owned()),
             mime: mime.into(),
-            content: Vec::new()
+            content: Vec::new(),
         }
     }
 

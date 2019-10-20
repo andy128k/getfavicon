@@ -1,6 +1,6 @@
+use getfavicon::get_favicon;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use getfavicon::get_favicon;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "getfavicon", about = "Downloads a favicon for a given page.")]

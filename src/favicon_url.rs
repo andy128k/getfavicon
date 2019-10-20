@@ -1,5 +1,5 @@
-use url::Url;
 use crate::error::*;
+use url::Url;
 
 fn favicon_parsed(parsed_opt: Option<&str>) -> Result<String> {
     let parsed = parsed_opt.ok_or(Error::NoLink)?;
@@ -28,8 +28,12 @@ pub fn favicon_url(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
 
 pub fn favicon_filename(favicon_url: &str) -> Result<String> {
     let url = Url::parse(favicon_url).map_err(Error::UrlParse)?;
-    let path = url.path_segments().ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
-    let last = path.last().ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
+    let path = url
+        .path_segments()
+        .ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
+    let last = path
+        .last()
+        .ok_or_else(|| Error::NoPath(favicon_url.to_string()))?;
     if !last.is_empty() {
         Ok(last.to_owned())
     } else {
@@ -56,14 +60,20 @@ mod tests {
 
     #[test]
     fn test_favicon_parsed_with_base() {
-        let base = favicon_parsed_with_base(Some("favicon.ico"), "http://example.com/page/index.html?a=b");
+        let base = favicon_parsed_with_base(
+            Some("favicon.ico"),
+            "http://example.com/page/index.html?a=b",
+        );
         assert!(base.is_ok());
         assert_eq!(base.unwrap(), "http://example.com/page/favicon.ico");
     }
 
     #[test]
     fn test_favicon_parsed_with_base_relative() {
-        let base = favicon_parsed_with_base(Some("../favicon.ico"), "http://example.com/page/index.html?a=b");
+        let base = favicon_parsed_with_base(
+            Some("../favicon.ico"),
+            "http://example.com/page/index.html?a=b",
+        );
         assert!(base.is_ok());
         assert_eq!(base.unwrap(), "http://example.com/favicon.ico");
     }
@@ -77,28 +87,38 @@ mod tests {
 
     #[test]
     fn test_favicon_url_relative() {
-        let base = favicon_url(Some("favicon.ico"), "http://example.com/page/index.html?a=b");
+        let base = favicon_url(
+            Some("favicon.ico"),
+            "http://example.com/page/index.html?a=b",
+        );
         assert!(base.is_ok());
         assert_eq!(base.unwrap(), "http://example.com/page/favicon.ico");
     }
 
     #[test]
     fn test_favicon_url_absolute() {
-        let base = favicon_url(Some("/favicon.ico"), "http://example.org/post/with/some/long/path?and=query&also=presents");
+        let base = favicon_url(
+            Some("/favicon.ico"),
+            "http://example.org/post/with/some/long/path?and=query&also=presents",
+        );
         assert!(base.is_ok());
         assert_eq!(base.unwrap(), "http://example.org/favicon.ico");
     }
 
     #[test]
     fn test_favicon_url_fallback() {
-        let base = favicon_url(None, "http://example.org/post/with/some/long/path?and=query&also=presents");
+        let base = favicon_url(
+            None,
+            "http://example.org/post/with/some/long/path?and=query&also=presents",
+        );
         assert!(base.is_ok());
         assert_eq!(base.unwrap(), "http://example.org/favicon.ico");
     }
 
     #[test]
     fn test_favicon_filename_positive() {
-        let filename = favicon_filename("http://example.org/post/with/some/long/path?and=query&also=presents");
+        let filename =
+            favicon_filename("http://example.org/post/with/some/long/path?and=query&also=presents");
         assert!(filename.is_ok());
         assert_eq!(filename.unwrap(), "path");
     }
