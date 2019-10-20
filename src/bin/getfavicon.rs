@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::PathBuf;
 use structopt::StructOpt;
 use getfavicon::get_favicon;
 
@@ -9,12 +9,12 @@ struct Opts {
     page_url: String,
 
     #[structopt(help = "Output file")]
-    output_file: String,
+    output_file: PathBuf,
 }
 
 fn main() {
     let args = Opts::from_args();
-    let result = get_favicon(&args.page_url, Path::new(&args.output_file));
+    let result = get_favicon(&args.page_url, &args.output_file);
 
     if let Err(e) = result {
         println!("{:?}", e);
