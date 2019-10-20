@@ -1,37 +1,52 @@
-#[derive(Fail, Debug)]
+#[derive(Debug)]
 pub enum Error {
-    #[fail(display = "Unexpected response status: {}.", _0)]
-    UnexpectedStatus(::reqwest::StatusCode),
-
-    #[fail(display = "Unsupported scheme: {}.", _0)]
+    UnexpectedStatus(reqwest::StatusCode),
     UnsupportedScheme(String),
-
-    #[fail(display = "Unsupported data URL encoding.")]
     UnsupportedDataURLEncoding,
-
-    #[fail(display = "No link to favicon.")]
     NoLink,
-
-    #[fail(display = "URL '{}' has no path.", _0)]
     NoPath(String),
-
-    #[fail(display = "Bad image.")]
     BadImage,
+    BadImageData(base64::DecodeError),
+    BadImageFormat(std::string::FromUtf8Error),
+    Io(std::io::Error),
+    UrlParse(url::ParseError),
+    Request(reqwest::Error),
+}
 
-    #[fail(display = "Bad image data {}.", _0)]
-    BadImageData(#[cause] base64::DecodeError),
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Error::UnexpectedStatus(c) => write!(f, "Unexpected response status: {}.", c),
+            Error::UnsupportedScheme(s) => write!(f, "Unsupported scheme: {}.", s),
+            Error::UnsupportedDataURLEncoding => write!(f, "Unsupported data URL encoding."),
+            Error::NoLink => write!(f, "No link to favicon."),
+            Error::NoPath(url) => write!(f, "URL '{}' has no path.", url),
+            Error::BadImage => write!(f, "Bad image."),
+            Error::BadImageData(e) => write!(f, "Bad image data {}.", e),
+            Error::BadImageFormat(e) => write!(f, "Bad image format {}.", e),
+            Error::Io(e) => write!(f, "I/O error {}.", e),
+            Error::UrlParse(e) => write!(f, "URL parse error {}.", e),
+            Error::Request(e) => write!(f, "Request error {}.", e),
+        }
+    }
+}
 
-    #[fail(display = "Bad image format {}.", _0)]
-    BadImageFormat(#[cause] std::string::FromUtf8Error),
-
-    #[fail(display = "I/O error {}.", _0)]
-    Io(#[cause] std::io::Error),
-
-    #[fail(display = "URL parse error {}.", _0)]
-    UrlParse(#[cause] url::ParseError),
-
-    #[fail(display = "Request error {}.", _0)]
-    Request(#[cause] reqwest::Error),
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Error::UnexpectedStatus(..) => None,
+            Error::UnsupportedScheme(..) => None,
+            Error::UnsupportedDataURLEncoding => None,
+            Error::NoLink => None,
+            Error::NoPath(..) => None,
+            Error::BadImage => None,
+            Error::BadImageData(e) => Some(e),
+            Error::BadImageFormat(e) => Some(e),
+            Error::Io(e) => Some(e),
+            Error::UrlParse(e) => Some(e),
+            Error::Request(e) => Some(e),
+        }
+    }
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

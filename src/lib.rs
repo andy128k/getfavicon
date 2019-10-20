@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate failure;
-
 pub mod error;
 mod find_favicon;
 mod favicon_url;
