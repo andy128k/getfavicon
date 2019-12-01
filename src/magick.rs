@@ -19,8 +19,10 @@ fn identify(path: &Path) -> Result<String> {
         .arg(path)
         .stdout(Stdio::piped())
         .spawn()
-        .map_err(Error::Io)?;
-    let output = child.wait_with_output().map_err(Error::Io)?;
+        .map_err(|e| Error::Io(format!("Spawn identify image at {}", path.display()), e))?;
+    let output = child
+        .wait_with_output()
+        .map_err(|e| Error::Io(format!("Wait identify image at {}", path.display()), e))?;
     let result = String::from_utf8(output.stdout).map_err(Error::BadImageFormat)?;
     Ok(result)
 }
@@ -66,7 +68,9 @@ pub fn convert(path: &Path, layer_index: usize, output: &Path) -> Result<()> {
         .arg("16x16>")
         .arg(output)
         .spawn()
-        .map_err(Error::Io)?;
-    child.wait().map_err(Error::Io)?;
+        .map_err(|e| Error::Io(format!("spawn convert image at {}", path.display()), e))?;
+    child
+        .wait()
+        .map_err(|e| Error::Io(format!("Wait convert image at {}", path.display()), e))?;
     Ok(())
 }

@@ -8,7 +8,7 @@ pub enum Error {
     BadImage,
     BadImageData(base64::DecodeError),
     BadImageFormat(std::string::FromUtf8Error),
-    Io(std::io::Error),
+    Io(String, std::io::Error),
     UrlParse(url::ParseError),
     Request(reqwest::Error),
 }
@@ -24,7 +24,7 @@ impl std::fmt::Display for Error {
             Error::BadImage => write!(f, "Bad image."),
             Error::BadImageData(e) => write!(f, "Bad image data {}.", e),
             Error::BadImageFormat(e) => write!(f, "Bad image format {}.", e),
-            Error::Io(e) => write!(f, "I/O error {}.", e),
+            Error::Io(ctx, e) => write!(f, "I/O error {}. Context: {}.", e, ctx),
             Error::UrlParse(e) => write!(f, "URL parse error {}.", e),
             Error::Request(e) => write!(f, "Request error {}.", e),
         }
@@ -42,7 +42,7 @@ impl std::error::Error for Error {
             Error::BadImage => None,
             Error::BadImageData(e) => Some(e),
             Error::BadImageFormat(e) => Some(e),
-            Error::Io(e) => Some(e),
+            Error::Io(_, e) => Some(e),
             Error::UrlParse(e) => Some(e),
             Error::Request(e) => Some(e),
         }

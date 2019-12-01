@@ -39,7 +39,7 @@ fn fetch_http_favicon(favicon_url: &str) -> Result<Favicon> {
     let mut content = Vec::new();
     favicon_response
         .read_to_end(&mut content)
-        .map_err(Error::Io)?;
+        .map_err(|e| Error::Io(format!("Download url {}", favicon_url), e))?;
 
     Ok(Favicon {
         filename,

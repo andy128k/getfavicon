@@ -55,8 +55,9 @@ impl Favicon {
             .suffix(self.suffix())
             .rand_bytes(10)
             .tempfile()
-            .map_err(Error::Io)?;
-        file.write_all(&self.content).map_err(Error::Io)?;
+            .map_err(|e| Error::Io("Create temporary file for favicon".to_string(), e))?;
+        file.write_all(&self.content)
+            .map_err(|e| Error::Io("Save favicon to temporary file".to_string(), e))?;
         Ok(file)
     }
 
