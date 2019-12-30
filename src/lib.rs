@@ -17,8 +17,8 @@ fn layer_weight(layer: &magick::Layer) -> (u32, u32, u32, u32) {
     (small, layer.width, layer.height, layer.color_depth)
 }
 
-pub fn get_favicon(page_url: &str, output_file: &Path) -> Result<()> {
-    let favicon = download::download_favicon(page_url)?;
+pub async fn get_favicon(page_url: &str, output_file: &Path) -> Result<()> {
+    let favicon = download::download_favicon(page_url).await?;
     let file = favicon.save_to_temporary()?;
     let layers = magick::layers(file.path())?;
     let best = layers

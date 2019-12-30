@@ -4,17 +4,15 @@ version = "0.2.0"
 authors = ["Andrey Kutejko <andy128k@gmail.com>"]
 edition = "2018"
 
-[[bin]]
-name = "getfavicon"
-path = "src/bin/getfavicon.rs"
-doc = false
-
 [dependencies]
 regex = "1.0.0"
 url = "2"
-reqwest = "0.9.0"
+reqwest = "0.10"
 mime = "0.3"
 tempfile = "3.0.0"
 lazy_static = "1.0.0"
-structopt = "0.3"
 base64 = "0.11"
+
+[dev-dependencies]
+structopt = "0.3"
+tokio = { version = "0.2.0", features = ["macros"] }

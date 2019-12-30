@@ -12,12 +12,9 @@ struct Opts {
     output_file: PathBuf,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), getfavicon::error::Error> {
     let args = Opts::from_args();
-    let result = get_favicon(&args.page_url, &args.output_file);
-
-    if let Err(e) = result {
-        println!("{:?}", e);
-        std::process::exit(1);
-    }
+    get_favicon(&args.page_url, &args.output_file).await?;
+    Ok(())
 }

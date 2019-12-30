@@ -2,7 +2,6 @@ use lazy_static::lazy_static;
 use mime::Mime;
 use regex::Regex;
 use reqwest::{self, header::CONTENT_TYPE, Response};
-use std::io::Read;
 use std::str::FromStr;
 use url::Url;
 
@@ -25,21 +24,21 @@ fn get_mime(response: &Response) -> Option<Mime> {
         .and_then(|value| Mime::from_str(value).ok())
 }
 
-fn fetch_page(page_url: &str) -> Result<String> {
-    let content = reqwest::get(page_url)?.error_for_status()?.text()?;
+async fn fetch_page(page_url: &str) -> Result<String> {
+    let content = reqwest::get(page_url)
+        .await?
+        .text()
+        .await?;
     Ok(content)
 }
 
-fn fetch_http_favicon(favicon_url: &str) -> Result<Favicon> {
-    let mut favicon_response = reqwest::get(favicon_url)?.error_for_status()?;
+async fn fetch_http_favicon(favicon_url: &str) -> Result<Favicon> {
+    let favicon_response = reqwest::get(favicon_url).await?.error_for_status()?;
 
     let mime = get_mime(&favicon_response);
     let filename = favicon_url::favicon_filename(favicon_url).ok();
 
-    let mut content = Vec::new();
-    favicon_response
-        .read_to_end(&mut content)
-        .map_err(|e| Error::Io(format!("Download url {}", favicon_url), e))?;
+    let content = favicon_response.bytes().await?.to_vec();
 
     Ok(Favicon {
         filename,
@@ -71,19 +70,19 @@ fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
     })
 }
 
-fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
+async fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
     let url = Url::parse(favicon_url).map_err(Error::UrlParse)?;
     match url.scheme() {
-        "http" | "https" => fetch_http_favicon(favicon_url),
+        "http" | "https" => fetch_http_favicon(favicon_url).await,
         "data" => fetch_data_favicon(&url),
         scheme => Err(Error::UnsupportedScheme(scheme.to_owned())),
     }
 }
 
-pub fn download_favicon(page_url: &str) -> Result<Favicon> {
-    let page_content = fetch_page(page_url)?;
+pub async fn download_favicon(page_url: &str) -> Result<Favicon> {
+    let page_content = fetch_page(page_url).await?;
     let parsed_url = find_favicon::find_favicon(&page_content);
     let favicon_url = favicon_url::favicon_url(parsed_url.as_ref().map(String::as_str), page_url)?;
-    let favicon = fetch_favicon(&favicon_url)?;
+    let favicon = fetch_favicon(&favicon_url).await?;
     Ok(favicon)
 }
