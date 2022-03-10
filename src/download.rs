@@ -25,10 +25,7 @@ fn get_mime(response: &Response) -> Option<Mime> {
 }
 
 async fn fetch_page(page_url: &str) -> Result<String> {
-    let content = reqwest::get(page_url)
-        .await?
-        .text()
-        .await?;
+    let content = reqwest::get(page_url).await?.text().await?;
     Ok(content)
 }
 
@@ -56,7 +53,7 @@ fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
 
     let matches = DATA_URL
         .captures(path)
-        .ok_or_else(|| Error::UnsupportedDataURLEncoding)?;
+        .ok_or(Error::UnsupportedDataURLEncoding)?;
     let mime_str = &matches[1];
     let content_base64 = &matches[2];
 
@@ -82,7 +79,7 @@ async fn fetch_favicon(favicon_url: &str) -> Result<Favicon> {
 pub async fn download_favicon(page_url: &str) -> Result<Favicon> {
     let page_content = fetch_page(page_url).await?;
     let parsed_url = find_favicon::find_favicon(&page_content);
-    let favicon_url = favicon_url::favicon_url(parsed_url.as_ref().map(String::as_str), page_url)?;
+    let favicon_url = favicon_url::favicon_url(parsed_url.as_deref(), page_url)?;
     let favicon = fetch_favicon(&favicon_url).await?;
     Ok(favicon)
 }

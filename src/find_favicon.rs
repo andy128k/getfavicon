@@ -50,8 +50,8 @@ pub fn find_favicon(html: &str) -> Option<String> {
         .captures_iter(html)
         .filter_map(get_attributes)
         .filter(|attributes| is_icon(attributes))
-        .filter_map(|attributes| get_href(attributes))
-        .nth(0)
+        .filter_map(get_href)
+        .next()
         .map(|href| href.to_owned())
 }
 

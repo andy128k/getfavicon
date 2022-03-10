@@ -37,9 +37,9 @@ fn parse_layers(info: &str) -> Result<Vec<Layer>> {
 
     let mut layers = Vec::new();
     for (index, layer_match) in re.captures_iter(info).enumerate() {
-        let width = u32::from_str_radix(&layer_match[1], 10).unwrap();
-        let height = u32::from_str_radix(&layer_match[2], 10).unwrap();
-        let depth = u32::from_str_radix(&layer_match[3], 10).unwrap();
+        let width = layer_match[1].parse::<u32>().unwrap();
+        let height = layer_match[2].parse::<u32>().unwrap();
+        let depth = layer_match[3].parse::<u32>().unwrap();
         layers.push(Layer {
             index,
             width,

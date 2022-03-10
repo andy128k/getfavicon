@@ -4,20 +4,20 @@ use url::Url;
 fn favicon_parsed(parsed_opt: Option<&str>) -> Result<String> {
     let parsed = parsed_opt.ok_or(Error::NoLink)?;
     let parsed_url = Url::parse(parsed).map_err(Error::UrlParse)?;
-    Ok(parsed_url.into_string())
+    Ok(parsed_url.into())
 }
 
 fn favicon_parsed_with_base(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
     let parsed = parsed_opt.ok_or(Error::NoLink)?;
     let base = Url::parse(page_url).map_err(Error::UrlParse)?;
     let joined = base.join(parsed).map_err(Error::UrlParse)?;
-    Ok(joined.into_string())
+    Ok(joined.into())
 }
 
 fn favicon_fallback(page_url: &str) -> Result<String> {
     let base = Url::parse(page_url).map_err(Error::UrlParse)?;
     let joined = base.join("/favicon.ico").map_err(Error::UrlParse)?;
-    Ok(joined.into_string())
+    Ok(joined.into())
 }
 
 pub fn favicon_url(parsed_opt: Option<&str>, page_url: &str) -> Result<String> {
