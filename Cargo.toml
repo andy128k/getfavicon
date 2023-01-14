@@ -11,7 +11,7 @@ reqwest = "0.11"
 mime = "0.3"
 tempfile = "3"
 lazy_static = "1"
-base64 = "0.13"
+base64 = "0.21"
 
 [dev-dependencies]
 structopt = "0.3"

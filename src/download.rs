@@ -1,3 +1,4 @@
+use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine};
 use lazy_static::lazy_static;
 use mime::Mime;
 use regex::Regex;
@@ -58,7 +59,9 @@ fn fetch_data_favicon(url: &Url) -> Result<Favicon> {
     let content_base64 = &matches[2];
 
     let mime = mime_str.parse::<Mime>().ok();
-    let content = base64::decode(content_base64).map_err(Error::BadImageData)?;
+    let content = BASE64_STANDARD
+        .decode(content_base64)
+        .map_err(Error::BadImageData)?;
 
     Ok(Favicon {
         filename: None,
