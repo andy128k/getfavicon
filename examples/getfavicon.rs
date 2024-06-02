@@ -1,20 +1,20 @@
 use getfavicon::get_favicon;
 use std::path::PathBuf;
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(StructOpt, Debug)]
-#[structopt(name = "getfavicon", about = "Downloads a favicon for a given page.")]
+#[derive(Parser, Debug)]
+#[command(name = "getfavicon", about = "Downloads a favicon for a given page.")]
 struct Opts {
-    #[structopt(help = "URL of a page")]
+    /// URL of a page
     page_url: String,
 
-    #[structopt(help = "Output file")]
+    /// Output file
     output_file: PathBuf,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), getfavicon::error::Error> {
-    let args = Opts::from_args();
+    let args = Opts::parse();
     get_favicon(&args.page_url, &args.output_file).await?;
     Ok(())
 }
